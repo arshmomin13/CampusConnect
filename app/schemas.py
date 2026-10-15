@@ -11,6 +11,16 @@ class EventFields(BaseModel):
     source_url: str = Field(default="", max_length=1000)
 
 
+
+class EventPatch(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+    description: str | None = Field(default=None, max_length=5000)
+    date: datetime | None = None
+    location: str | None = Field(default=None, max_length=200)
+    category: str | None = Field(default=None, min_length=1, max_length=80)
+    source_url: str | None = Field(default=None, max_length=1000)
+
+
 class EventCreate(EventFields):
     pass
 

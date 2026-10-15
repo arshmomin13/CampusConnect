@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from .database import Base, engine, get_db
 from .models import Event
-from .schemas import EventCreate, EventRead, EventUpdate
+from .schemas import EventCreate, EventPatch, EventRead, EventUpdate
 
 BASE_DIR = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
@@ -78,6 +78,25 @@ def update_event(event_id: int, payload: EventUpdate, db: Session = Depends(get_
         raise HTTPException(status_code=404, detail="Event not found")
     for key, value in payload.model_dump().items():
         setattr(event, key, value)
+    db.commit()
+    db.refresh(event)
+    return event
+
+
+@app.patch("/api/events/{event_id}", response_model=EventRead)
+def patch_event(
+    event_id: int,
+    payload: EventPatch,
+    db: Session = Depends(get_db),
+):
+    event = db.get(Event, event_id)
+    if event is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    updates = payload.model_dump(exclude_unset=True)
+    for key, value in updates.items():
+        setattr(event, key, value)
+
     db.commit()
     db.refresh(event)
     return event
