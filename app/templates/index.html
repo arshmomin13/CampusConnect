@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CampusConnect — Campus events</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand-mark">CC</div>
+    <div>
+      <h1>CampusConnect</h1>
+      <p>Find your next campus moment.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="intro">
+      <div>
+        <p class="eyebrow">YOUR CAMPUS, CONNECTED</p>
+        <h2>Something is happening.</h2>
+        <p class="muted">Explore events, discover opportunities, and find your people.</p>
+      </div>
+      <a class="button button-light" href="#add-event">＋ Add an event</a>
+    </section>
+
+    <section class="toolbar" aria-label="Event filters">
+      <label class="search-box">
+        <span class="visually-hidden">Search events</span>
+        <span aria-hidden="true">⌕</span>
+        <input id="search" type="search" placeholder="Search events, places, keywords…">
+      </label>
+      <label>
+        <span class="visually-hidden">Filter by category</span>
+        <select id="category">
+          <option value="all">All categories</option>
+          {% for category in categories %}
+          <option value="{{ category }}">{{ category }}</option>
+          {% endfor %}
+          {% for category in ["Academic", "Career", "Social", "Sports", "Arts", "Other"] %}
+          {% if category not in categories %}
+          <option value="{{ category }}">{{ category }}</option>
+          {% endif %}
+          {% endfor %}
+        </select>
+      </label>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Upcoming events</h2>
+        <span id="result-count" class="muted">{{ events|length }} event{% if events|length != 1 %}s{% endif %}</span>
+      </div>
+      <div id="event-grid" class="event-grid">
+        {% for event in events %}
+        <article class="event-card" data-title="{{ event.title|lower }}" data-description="{{ event.description|lower }}" data-location="{{ event.location|lower }}" data-category="{{ event.category }}">
+          <div class="date-tile">
+            <span>{{ event.date.strftime("%b") }}</span>
+            <strong>{{ event.date.strftime("%d") }}</strong>
+            <small>{{ event.date.strftime("%I:%M %p").lstrip("0") }}</small>
+          </div>
+          <div class="event-content">
+            <div class="card-topline">
+              <span class="category-pill">{{ event.category }}</span>
+              <span class="muted small">{{ event.date.strftime("%a, %b %d") }}</span>
+            </div>
+            <h3>{{ event.title }}</h3>
+            <p class="description">{{ event.description or "More details coming soon." }}</p>
+            <p class="location">⌖ {{ event.location or "Location to be announced" }}</p>
+            {% if event.source_url %}
+            <a class="source-link" href="{{ event.source_url }}" target="_blank" rel="noopener noreferrer">Original listing ↗</a>
+            {% endif %}
+            <form method="post" action="/events/{{ event.id }}/delete" onsubmit="return confirm('Delete this event?')">
+              <button class="delete-link" type="submit">Delete event</button>
+            </form>
+          </div>
+        </article>
+        {% else %}
+        <div id="empty-state" class="empty-state">
+          <span>✦</span>
+          <h3>Your campus calendar starts here</h3>
+          <p>Add an event using the form below. Use clearly labeled sample data while developing.</p>
+        </div>
+        {% endfor %}
+      </div>
+      <p id="no-results" class="empty-note" hidden>No events match those filters. Try another search.</p>
+    </section>
+
+    <section id="add-event" class="add-section">
+      <div class="add-copy">
+        <p class="eyebrow">GOT SOMETHING GOING ON?</p>
+        <h2>Add an event</h2>
+        <p class="muted">Enter a campus event to see it appear in the list. This MVP does not yet include user accounts or moderation.</p>
+      </div>
+      <form class="event-form" method="post" action="/events/new">
+        <label>Event title <input name="title" required maxlength="200" placeholder="e.g. Student Organization Fair"></label>
+        <label>Description <textarea name="description" rows="3" maxlength="5000" placeholder="What should students know?"></textarea></label>
+        <div class="form-row">
+          <label>Date and time <input name="date" type="datetime-local" required></label>
+          <label>Category
+            <select name="category">
+              <option>Academic</option><option>Career</option><option>Social</option><option>Sports</option><option>Arts</option><option selected>Other</option>
+            </select>
+          </label>
+        </div>
+        <label>Location <input name="location" maxlength="200" placeholder="e.g. Student Union"></label>
+        <label>Source URL <input name="source_url" type="url" maxlength="1000" placeholder="https://university.edu/events/..."></label>
+        <button class="button" type="submit">Add event</button>
+      </form>
+    </section>
+  </main>
+  <footer>CampusConnect · Student-built project · Verify event details with the original source.</footer>
+  <script src="/static/app.js"></script>
+</body>
+</html>
