@@ -14,21 +14,30 @@ A student-built campus event aggregator MVP using FastAPI, SQLAlchemy, SQLite, J
 
 ## Setup (macOS / zsh)
 
+### Initial setup
+
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) if you haven't already, then run:
+
 ```bash
 cd ~/projects/CampusConnect
 
 # Install Python 3.12 if needed
 uv python install 3.12
 
-# Create and activate the virtual environment
+# Create the virtual environment
 uv venv --python 3.12
-source .venv/bin/activate
 
 # Install dependencies
-uv pip install -r requirements.txt
+uv pip install --python .venv/bin/python -r requirements.txt
+```
 
-# Run the application server
-uvicorn app.main:app --reload
+The project uses Python 3.12. The `.python-version` file specifies
+the Python version used by `uv`.
+
+### Run the application server
+
+```bash
+uv run uvicorn app.main:app --reload
 ```
 
 Open http://127.0.0.1:8000 for the site and http://127.0.0.1:8000/docs for API docs.
@@ -40,7 +49,7 @@ CampusConnect uses `pytest` and FastAPI's test client to verify backend behavior
 Run the test suite from the project root:
 
 ```bash
-python -m pytest -v
+uv run python -m pytest -v
 ```
 
 The test suite covers:
@@ -49,6 +58,7 @@ The test suite covers:
 - Creating, listing, retrieving, updating, and deleting events
 - Handling requests for events that do not exist, including `404 Not Found` responses
 - Searching events by title
+- Filtering events by category
 
 Run the tests before committing changes to help catch regressions.
 
