@@ -24,11 +24,24 @@ uvicorn app.main:app --reload
 
 Open http://127.0.0.1:8000 for the site and http://127.0.0.1:8000/docs for API docs.
 
-## Tests
+## Automated Tests
 
-```zsh
-pytest
+CampusConnect uses `pytest` and FastAPI's test client to verify backend behavior.
+
+Run the test suite from the project root:
+
+```bash
+python -m pytest -v
 ```
+
+The test suite covers:
+
+- Health-check endpoint
+- Creating, listing, retrieving, updating, and deleting events
+- Handling requests for events that do not exist, including `404 Not Found` responses
+- Searching events by title
+
+Run the tests before committing changes to help catch regressions.
 
 ## API examples
 
@@ -59,4 +72,3 @@ Example JSON for `POST /api/events`:
 - Sample records should be clearly labeled and must not be presented as verified campus events.
 - Event source URLs should point to the original listing when real events are added.
 - The current SQLite database is created in the working directory as `campusconnect.db`.
-- This starter uses one shared database connection configuration; tests currently cover the health endpoint only.
