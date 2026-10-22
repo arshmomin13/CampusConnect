@@ -14,11 +14,20 @@ A student-built campus event aggregator MVP using FastAPI, SQLAlchemy, SQLite, J
 
 ## Setup (macOS / zsh)
 
-```zsh
+```bash
 cd ~/projects/CampusConnect
-python -m venv .venv
+
+# Install Python 3.12 if needed
+uv python install 3.12
+
+# Create and activate the virtual environment
+uv venv --python 3.12
 source .venv/bin/activate
-python -m pip install -r requirements.txt
+
+# Install dependencies
+uv pip install -r requirements.txt
+
+# Run the application server
 uvicorn app.main:app --reload
 ```
 
